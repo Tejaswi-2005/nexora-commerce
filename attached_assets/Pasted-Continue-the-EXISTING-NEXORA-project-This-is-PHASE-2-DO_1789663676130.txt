@@ -1,0 +1,977 @@
+Continue the EXISTING NEXORA project.
+
+This is PHASE 2.
+
+DO NOT redesign the website created in Phase 1.
+
+Preserve:
+
+* Existing visual design
+* Components
+* Navigation
+* Animations
+* Responsive behavior
+* Product page design
+* Shop page design
+
+Now transform the existing frontend into a REAL full-stack e-commerce application.
+
+The main objective is:
+
+React
+↓
+Service layer
+↓
+Supabase
+↓
+PostgreSQL
+
+Replace temporary/mock functionality with database-backed functionality.
+
+---
+
+# 1. SUPABASE INTEGRATION
+
+Connect the application to Supabase.
+
+Use:
+
+Supabase PostgreSQL
+Supabase Authentication
+Supabase Storage
+Row Level Security
+
+Create a clean integration layer.
+
+Do not scatter Supabase queries throughout UI components.
+
+Use something similar to:
+
+src/
+integrations/
+supabase/
+
+services/
+productService.ts
+cartService.ts
+wishlistService.ts
+orderService.ts
+profileService.ts
+reviewService.ts
+couponService.ts
+
+---
+
+# 2. DATABASE SCHEMA
+
+Create proper PostgreSQL tables.
+
+## profiles
+
+id
+full_name
+email
+phone
+avatar_url
+role
+created_at
+updated_at
+
+role:
+
+customer
+admin
+
+---
+
+## categories
+
+id
+name
+slug
+description
+image_url
+active
+created_at
+
+---
+
+## products
+
+id
+category_id
+name
+slug
+brand
+short_description
+description
+price
+original_price
+sku
+stock
+rating
+review_count
+featured
+new_arrival
+active
+created_at
+updated_at
+
+Create indexes for:
+
+slug
+category_id
+brand
+active
+
+---
+
+## product_images
+
+id
+product_id
+image_url
+alt_text
+sort_order
+
+---
+
+## product_variants
+
+id
+product_id
+variant_type
+variant_value
+price_adjustment
+stock
+sku
+
+Examples:
+
+Color → Black
+Size → M
+Storage → 256GB
+
+---
+
+## addresses
+
+id
+user_id
+full_name
+phone
+address_line_1
+address_line_2
+city
+state
+postal_code
+country
+is_default
+created_at
+
+---
+
+## carts
+
+id
+user_id
+created_at
+updated_at
+
+---
+
+## cart_items
+
+id
+cart_id
+product_id
+variant_id
+quantity
+created_at
+
+Prevent invalid duplicate cart rows where appropriate.
+
+---
+
+## wishlists
+
+id
+user_id
+created_at
+
+---
+
+## wishlist_items
+
+id
+wishlist_id
+product_id
+created_at
+
+Use uniqueness constraints so the same product isn't repeatedly inserted.
+
+---
+
+## orders
+
+id
+user_id
+address_id
+order_number
+subtotal
+discount
+delivery_fee
+tax
+total
+payment_method
+payment_status
+order_status
+created_at
+updated_at
+
+Statuses:
+
+pending
+confirmed
+processing
+shipped
+out_for_delivery
+delivered
+cancelled
+returned
+
+---
+
+## order_items
+
+id
+order_id
+product_id
+variant_id
+product_name
+quantity
+unit_price
+total_price
+
+Important:
+
+Store relevant product/price snapshots in order_items so old orders remain accurate if a product later changes.
+
+---
+
+## reviews
+
+id
+user_id
+product_id
+order_item_id
+rating
+title
+review
+verified_purchase
+helpful_count
+created_at
+updated_at
+
+---
+
+## coupons
+
+id
+code
+discount_type
+discount_value
+minimum_order
+maximum_discount
+start_date
+expiry_date
+usage_limit
+used_count
+active
+
+discount_type:
+
+percentage
+fixed
+
+---
+
+## coupon_usage
+
+id
+coupon_id
+user_id
+order_id
+used_at
+
+---
+
+## recently_viewed
+
+id
+user_id
+product_id
+viewed_at
+
+---
+
+## notifications
+
+id
+user_id
+title
+message
+type
+read
+created_at
+
+---
+
+# 3. AUTHENTICATION
+
+Replace temporary authentication UI with real Supabase Authentication.
+
+Implement:
+
+Signup
+Login
+Logout
+Session persistence
+Forgot password
+Reset password
+Email verification flow where configured
+
+After signup, create/update the user's profile.
+
+Do not store plaintext passwords anywhere.
+
+Create an AuthContext or appropriate authentication hook.
+
+Example:
+
+useAuth()
+
+Expose:
+
+user
+profile
+loading
+signIn
+signUp
+signOut
+
+---
+
+# 4. PROTECTED ROUTES
+
+Protect:
+
+/account
+/account/orders
+/account/addresses
+/checkout
+
+Unauthenticated users should be redirected appropriately.
+
+Protect:
+
+/admin/*
+
+Admin access must require:
+
+profile.role === "admin"
+
+Do NOT rely only on hiding the Admin button.
+
+Database permissions must also enforce authorization.
+
+---
+
+# 5. ROW LEVEL SECURITY
+
+Enable RLS.
+
+Customers can only read/update their own:
+
+profiles
+addresses
+carts
+cart_items
+wishlists
+wishlist_items
+orders
+reviews where appropriate
+recently_viewed
+notifications
+
+Public users can read:
+
+active products
+active categories
+approved/public reviews
+
+Customers must NEVER be able to modify:
+
+Product prices
+Product inventory
+Other users' orders
+Other users' profiles
+Admin-controlled coupons
+
+Admin operations require appropriate authorization.
+
+---
+
+# 6. PRODUCTS
+
+Replace hardcoded product data with database queries.
+
+Home:
+
+Trending → database
+New arrivals → database
+Featured → database
+
+Shop:
+
+Products → database
+
+Product page:
+
+Product → database
+Images → database
+Variants → database
+Reviews → database
+
+Preserve loading skeletons while queries execute.
+
+---
+
+# 7. SEARCH
+
+Connect search to actual product data.
+
+Search:
+
+name
+brand
+category
+description where useful
+
+Maintain debouncing.
+
+Do not execute a database query on every single immediate keystroke without control.
+
+---
+
+# 8. DATABASE FILTERING
+
+Move product filtering to efficient database queries where appropriate.
+
+Support:
+
+Category
+Brand
+Price
+Rating
+Availability
+Discount
+
+Sorting:
+
+Newest
+Price ascending
+Price descending
+Rating
+
+Avoid fetching the entire product database and filtering everything in the browser when database filtering is more appropriate.
+
+---
+
+# 9. DATABASE CART
+
+For logged-in users, replace local-only cart persistence with database cart persistence.
+
+Implement:
+
+Add
+Remove
+Quantity update
+Variant selection
+Clear cart
+
+When logged out:
+
+Allow guest cart using localStorage.
+
+When the user logs in:
+
+Merge guest cart with database cart intelligently.
+
+Do not duplicate identical cart products unnecessarily.
+
+---
+
+# 10. WISHLIST
+
+Authenticated wishlist must use database storage.
+
+Add
+Remove
+Move to cart
+
+When logged out, optionally retain temporary local wishlist.
+
+On login, synchronize appropriately.
+
+---
+
+# 11. ACCOUNT DASHBOARD
+
+Build:
+
+/account
+
+Create sidebar navigation:
+
+Overview
+Orders
+Wishlist
+Addresses
+Profile
+Notifications
+Settings
+
+Overview should show useful account information.
+
+Do not use fake revenue/statistics.
+
+---
+
+# 12. PROFILE
+
+Allow authenticated users to update:
+
+Full name
+Phone
+Avatar
+
+Use Supabase Storage for avatar uploads.
+
+Validate:
+
+File type
+File size
+
+Show loading and error states.
+
+---
+
+# 13. ADDRESS MANAGEMENT
+
+/account/addresses
+
+Implement:
+
+Add
+Edit
+Delete
+Set default
+
+Fields:
+
+Full name
+Phone
+Address line 1
+Address line 2
+City
+State
+Postal/PIN code
+Country
+
+Before deletion, confirm.
+
+---
+
+# 14. CHECKOUT
+
+Build a functional multi-step checkout.
+
+STEP 1
+ADDRESS
+
+Choose existing address or create one.
+
+STEP 2
+DELIVERY
+
+Standard
+Express where configured
+
+STEP 3
+PAYMENT
+
+Provide architecture for:
+
+Card
+UPI
+Cash on Delivery
+
+IMPORTANT:
+
+Do NOT pretend real payments succeeded if no payment provider is connected.
+
+For development, create an explicitly labeled test checkout flow.
+
+Design payment architecture so Stripe or Razorpay can be connected later.
+
+STEP 4
+REVIEW
+
+Display:
+
+Products
+Address
+Payment method
+Subtotal
+Discount
+Delivery
+Tax
+Total
+
+STEP 5
+ORDER
+
+Create the order transaction safely.
+
+---
+
+# 15. ORDER CREATION
+
+When checkout succeeds:
+
+Validate products still exist.
+
+Validate current prices server-side/database-side where possible.
+
+Validate inventory.
+
+Validate coupon.
+
+Create order.
+
+Create order_items.
+
+Reduce inventory safely.
+
+Record coupon usage.
+
+Clear cart.
+
+Create confirmation notification.
+
+Do not trust product totals supplied by the frontend.
+
+Avoid creating half-completed orders.
+
+Use a database function/transaction/secure server-side mechanism where appropriate.
+
+---
+
+# 16. ORDER NUMBER
+
+Generate professional order identifiers.
+
+Example:
+
+NX-2026-A8F31D
+
+Do not expose simple sequential database IDs as the primary customer-facing order number.
+
+---
+
+# 17. ORDER SUCCESS
+
+Create:
+
+/order-success/:id
+
+Show:
+
+Success indicator
+Order number
+Estimated delivery
+Total
+Shipping address
+Continue Shopping
+View Order
+
+---
+
+# 18. ORDER HISTORY
+
+/account/orders
+
+Display:
+
+Order number
+Date
+Items
+Total
+Payment status
+Order status
+
+Add filtering:
+
+All
+Processing
+Shipped
+Delivered
+Cancelled
+
+---
+
+# 19. ORDER DETAILS
+
+/account/orders/:id
+
+Show:
+
+Products
+Address
+Payment
+Price breakdown
+Status
+
+Create visual tracking:
+
+Confirmed
+↓
+Processing
+↓
+Shipped
+↓
+Out for Delivery
+↓
+Delivered
+
+Use a polished progress timeline.
+
+---
+
+# 20. ORDER ACTIONS
+
+Allow:
+
+Cancel order when eligible
+Reorder
+Request return when eligible
+
+Do not allow cancellation after statuses where cancellation should no longer be possible.
+
+---
+
+# 21. COUPONS
+
+Connect checkout coupons to database.
+
+Validate:
+
+Exists
+Active
+Start date
+Expiry
+Minimum order
+Usage limit
+User usage
+
+Support:
+
+Percentage
+Fixed discount
+
+Never rely only on frontend calculations.
+
+Show messages such as:
+
+"Coupon applied — you saved ₹450."
+
+or
+
+"This coupon requires a minimum order of ₹2,000."
+
+---
+
+# 22. REVIEWS
+
+Authenticated users can review purchased products.
+
+Implement:
+
+1–5 stars
+Title
+Review
+
+Mark:
+
+Verified Purchase
+
+only if an order record confirms purchase.
+
+Users should not be able to arbitrarily assign themselves the verified badge.
+
+Update displayed average rating appropriately.
+
+---
+
+# 23. RECENTLY VIEWED
+
+For logged-in users:
+
+Store recently viewed products in the database.
+
+Keep only a reasonable recent history.
+
+For guests:
+
+Continue localStorage.
+
+---
+
+# 24. NOTIFICATIONS
+
+Create notification system for:
+
+Order confirmed
+Order shipped
+Order delivered
+Order cancelled
+
+Add notification dropdown to navbar.
+
+Allow:
+
+Mark as read
+Mark all as read
+
+---
+
+# 25. PRODUCT SEED DATA
+
+Insert approximately 40–50 realistic products across:
+
+Electronics
+Fashion
+Footwear
+Beauty
+Home
+Accessories
+Sports
+
+Use realistic:
+
+Names
+Descriptions
+Brands
+Prices
+Stock
+Specifications
+Variants
+
+Use INR pricing.
+
+Avoid fake lorem ipsum content.
+
+---
+
+# 26. ERROR HANDLING
+
+Handle:
+
+Database unavailable
+Authentication error
+Expired session
+Product missing
+Product out of stock
+Insufficient stock
+Coupon invalid
+Order creation failure
+Network failure
+
+Never silently fail.
+
+Use user-friendly messages.
+
+---
+
+# 27. SECURITY
+
+Do NOT expose:
+
+Supabase service-role key
+Payment secrets
+Private API keys
+
+Use environment variables.
+
+Client-safe Supabase configuration is okay where designed for browser use, but database RLS must provide actual protection.
+
+---
+
+# 28. PHASE 2 TEST
+
+Test this exact flow:
+
+NEW USER
+↓
+Sign up
+↓
+Login
+↓
+Browse products
+↓
+Search
+↓
+Filter
+↓
+Open product
+↓
+Choose variant
+↓
+Wishlist
+↓
+Add to cart
+↓
+Change quantity
+↓
+Checkout
+↓
+Create/select address
+↓
+Apply coupon
+↓
+Choose test payment/COD
+↓
+Place order
+↓
+Order confirmation
+↓
+Order history
+↓
+Order details
+↓
+Logout
+↓
+Login again
+↓
+Confirm persisted account/order data
+
+Also verify that one customer cannot access another customer's private data.
+
+Do not redesign Phase 1 while completing Phase 2.
+
+Fix existing implementation issues instead of creating duplicate systems.
+
+Once the complete full-stack customer flow works, STOP.
+
+Phase 3 will implement administration, advanced interactions, analytics and final production-quality polish.

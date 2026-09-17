@@ -1,10 +1,11 @@
-# [Project name]
+# NEXORA
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+NEXORA is a considered everyday-goods storefront with searchable products, persistent cart and wishlist flows, checkout, order history, and admin catalog controls.
 
 ## Run & Operate
 
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/nexora run dev` — run the storefront
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
@@ -22,23 +23,38 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/nexora/src/pages/` — storefront, account, checkout, and admin page surfaces
+- `artifacts/nexora/src/components/storefront.tsx` — shared shell, product cards, filters, and state views
+- `artifacts/api-server/src/routes/` — catalog, commerce, and admin API handlers
+- `lib/api-spec/openapi.yaml` — source of truth for generated API hooks and schemas
+- `lib/db/src/schema/ecommerce.ts` — PostgreSQL/Drizzle schema for NEXORA commerce data
+- `artifacts/nexora/src/index.css` — NEXORA design tokens and motion system
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- The API contract is defined in OpenAPI first; generated React Query hooks and Zod schemas are shared by the storefront and Express API.
+- Product catalog, cart, wishlist, coupons, and orders use the workspace PostgreSQL database through Drizzle.
+- Commerce endpoints use a session header so guest browsing and local development work before an external identity provider is connected.
+- Checkout is intentionally a test-mode order flow; payment providers are not faked and can be attached through the checkout service boundary later.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Editorial home and category discovery
+- Search, sorting, price filtering, product details, related products, and responsive product grids
+- Persistent cart, wishlist, coupon validation, checkout, confirmation, order history, and account overview
+- Admin summary and product create/update controls
+- Loading, empty, error, responsive, focus, and reduced-motion states
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Keep the storefront intentional and human-designed rather than template-like.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- After changing `lib/api-spec/openapi.yaml`, run `pnpm --filter @workspace/api-spec run codegen`.
+- After changing `lib/db/src/schema`, run `pnpm --filter @workspace/db run push` and then `pnpm run typecheck:libs`.
+- Artifact workflows provide `PORT` and `BASE_PATH`; do not run the Vite server directly for preview debugging.
+- Supabase authentication and live payment processing still require the corresponding integration setup before production use.
 
 ## Pointers
 

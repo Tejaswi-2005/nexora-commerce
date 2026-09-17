@@ -1,0 +1,1041 @@
+Build a complete, production-style, full-stack e-commerce web application called **NEXORA**.
+
+This must NOT look like a generic AI-generated website or template. Design it as if an experienced product designer and full-stack developer built it manually.
+
+The application should feel like a modern real-world e-commerce platform inspired by the usability and polish of leading shopping platforms, but DO NOT copy the branding, layout, assets, or design of any existing company.
+
+The project must demonstrate:
+
+* Frontend development
+* Backend development
+* Database design
+* Authentication
+* REST/API-style data operations
+* Real-time database interactions
+* Search and filtering
+* Cart and checkout logic
+* Order management
+* Admin functionality
+* Responsive UI/UX
+* Animations and micro-interactions
+* Security-conscious development
+
+## 1. TECHNOLOGY STACK
+
+Use:
+
+Frontend:
+
+* React
+* TypeScript
+* Vite
+* Tailwind CSS
+* shadcn/ui where useful
+* Lucide icons
+* Framer Motion or appropriate CSS animations
+
+Backend / Database:
+
+* Supabase
+* PostgreSQL
+* Supabase Authentication
+* Supabase Storage
+* Row Level Security
+
+Architecture:
+
+* Reusable React components
+* Custom hooks
+* Services/API layer
+* Proper TypeScript interfaces/types
+* Clean folder structure
+* Environment variables for secrets
+* Never expose private credentials in frontend code
+
+The application must use actual database operations rather than hardcoded products wherever possible.
+
+## 2. DESIGN DIRECTION
+
+Create a premium, modern, human-designed interface.
+
+Avoid:
+
+* Excessive gradients
+* Giant rounded cards everywhere
+* Random glassmorphism
+* Excessive shadows
+* Oversized headings
+* Repetitive card layouts
+* Generic AI landing-page patterns
+* Too much empty space
+* Fake statistics
+* Unnecessary decorative elements
+
+Instead use:
+
+* Strong visual hierarchy
+* Carefully chosen typography
+* Consistent spacing
+* Subtle borders
+* Professional product photography placeholders
+* Clean navigation
+* Thoughtful hover states
+* Small micro-interactions
+* Smooth transitions
+* Realistic product information
+* Natural content
+* Consistent design system
+
+Use a restrained modern color palette with one recognizable brand accent.
+
+Make the site fully responsive for:
+
+* Desktop
+* Laptop
+* Tablet
+* Mobile
+
+## 3. NAVIGATION
+
+Create a sticky responsive navbar.
+
+Desktop navigation:
+
+NEXORA logo
+
+Home
+Shop
+Categories
+New Arrivals
+Deals
+
+Large search field
+
+Icons:
+Search
+Wishlist
+Cart
+Notifications
+Profile
+
+Cart and wishlist icons should display item-count badges.
+
+On mobile, use a clean mobile navigation experience instead of squeezing desktop navigation into the screen.
+
+## 4. HOME PAGE
+
+Create a sophisticated e-commerce homepage.
+
+Include:
+
+### Hero Section
+
+Create an editorial-style hero rather than a generic centered heading.
+
+Use:
+
+* Strong headline
+* Short supporting copy
+* Shop Now CTA
+* Explore Collection secondary CTA
+* Featured product/lifestyle visual
+
+Add subtle entrance animations.
+
+### Category Explorer
+
+Show categories such as:
+
+Electronics
+Fashion
+Footwear
+Beauty
+Home
+Accessories
+Sports
+
+Each category should have an image/icon and interactive hover state.
+
+### Trending Products
+
+Load products dynamically from the database.
+
+Each product card should show:
+
+* Product image
+* Brand
+* Product name
+* Current price
+* Original price
+* Discount percentage
+* Rating
+* Review count
+* Wishlist button
+* Quick Add button
+
+Do NOT make every product card unnecessarily large.
+
+### New Arrivals
+
+Create a horizontally scrollable or responsive product collection.
+
+### Promotional Banner
+
+Add a realistic promotional section.
+
+Example:
+
+Weekend Edit
+Up to 40% off selected styles
+
+### Recommended Products
+
+When logged in, display personalized-looking recommendations based on recently viewed products and categories.
+
+When logged out, show popular products.
+
+### Recently Viewed
+
+Track recently viewed products locally or through the user profile and show them on the homepage.
+
+### Newsletter
+
+Add an elegant newsletter subscription section near the footer.
+
+## 5. SHOP PAGE
+
+Create a professional product listing page.
+
+Left sidebar / mobile filter drawer:
+
+Category
+Subcategory
+Brand
+Price range
+Rating
+Availability
+Discount
+Color
+Size
+
+Provide sorting:
+
+Recommended
+Newest
+Price Low → High
+Price High → Low
+Top Rated
+Most Popular
+
+Add:
+
+Grid/list toggle
+Result count
+Active filter chips
+Clear all filters
+Pagination or infinite scrolling
+
+Filters must actually modify displayed products.
+
+## 6. ADVANCED SEARCH
+
+Create a useful search experience.
+
+Search products using:
+
+* Product name
+* Brand
+* Category
+* Keywords
+
+Add:
+
+* Search suggestions
+* Recent searches
+* Trending searches
+* Product thumbnails in suggestions
+* No-results state
+
+Example:
+
+Search "headphones"
+
+Suggestions could immediately show matching products.
+
+Debounce search requests to avoid unnecessary database calls.
+
+## 7. PRODUCT DETAILS PAGE
+
+Create a rich product detail page.
+
+Include:
+
+Image gallery
+Large main image
+Thumbnail navigation
+Image zoom
+
+Product information:
+
+* Brand
+* Product name
+* Rating
+* Review count
+* Current price
+* Original price
+* Discount
+* Short description
+* Availability
+
+Variants:
+
+* Color
+* Size
+* Storage or other category-specific variants
+
+Actions:
+ADD TO CART
+BUY NOW
+ADD TO WISHLIST
+
+Include delivery information.
+
+Allow the user to enter a postal/PIN code and display a delivery estimate interface.
+
+Add:
+
+* Product specifications
+* Product description
+* Shipping information
+* Return information
+* Reviews
+* Related products
+* Frequently bought together
+* Recently viewed
+
+## 8. PRODUCT REVIEWS
+
+Build a complete review system.
+
+Users should be able to:
+
+* Rate 1–5 stars
+* Write reviews
+* Add a review title
+* See existing reviews
+
+Display:
+
+* Average rating
+* Rating distribution
+* Verified Purchase badge when applicable
+* Review date
+* Helpful count
+
+Only authenticated users who purchased the product should be eligible for a Verified Purchase review.
+
+## 9. AUTHENTICATION
+
+Use Supabase Authentication.
+
+Support:
+
+* Sign up
+* Login
+* Logout
+* Forgot password
+* Reset password
+* Email verification
+* Persistent login session
+
+Prepare architecture for social authentication such as Google.
+
+Create validation and meaningful error messages.
+
+Do not use fake authentication.
+
+## 10. USER PROFILE
+
+Create a dashboard at:
+
+/account
+
+Include:
+
+Overview
+Profile
+Orders
+Wishlist
+Addresses
+Recently Viewed
+Notifications
+Settings
+
+Allow users to update:
+
+* Name
+* Avatar
+* Phone
+* Email-related profile information where supported
+
+Create address management:
+
+Add address
+Edit address
+Delete address
+Set default address
+
+Fields:
+
+Full name
+Phone
+Address
+City
+State
+Postal/PIN code
+Country
+
+## 11. WISHLIST
+
+Users can:
+
+Add products
+Remove products
+Move product to cart
+View wishlist
+
+Persist authenticated users' wishlist in the database.
+
+Wishlist heart icons should update instantly across the application.
+
+## 12. SHOPPING CART
+
+Build a functional cart.
+
+Allow:
+
+* Add product
+* Remove product
+* Increase quantity
+* Decrease quantity
+* Change variants when appropriate
+* Move to wishlist
+
+Display:
+
+Subtotal
+Discount
+Delivery
+Taxes
+Grand Total
+
+Use a cart drawer for quick access and a dedicated cart page for complete management.
+
+Cart state should persist.
+
+## 13. COUPON SYSTEM
+
+Create database-driven coupons.
+
+Examples:
+
+WELCOME10
+SAVE20
+
+Database fields:
+
+code
+discount_type
+discount_value
+minimum_order
+maximum_discount
+start_date
+expiry_date
+usage_limit
+active
+
+Validate coupons on the backend/database layer wherever possible rather than trusting values supplied by the browser.
+
+Display meaningful messages for:
+
+* Invalid coupon
+* Expired coupon
+* Minimum order not reached
+* Coupon successfully applied
+
+## 14. CHECKOUT
+
+Create a professional multi-step checkout.
+
+Step 1:
+Address
+
+Step 2:
+Delivery
+
+Step 3:
+Payment
+
+Step 4:
+Review
+
+Step 5:
+Confirmation
+
+Payment options interface:
+
+Credit/Debit Card
+UPI
+Cash on Delivery
+
+IMPORTANT:
+
+Do not create fake successful payment processing.
+
+Create a payment-service abstraction that can later be connected to Stripe or Razorpay.
+
+For development, clearly label simulated/test checkout behavior.
+
+After successful test checkout:
+
+* Create order
+* Create order items
+* Update stock
+* Clear cart
+* Show confirmation
+
+## 15. ORDERS
+
+Create an Orders page.
+
+Display:
+
+Order ID
+Order date
+Products
+Amount
+Payment status
+Order status
+
+Possible order states:
+
+Pending
+Confirmed
+Processing
+Shipped
+Out for Delivery
+Delivered
+Cancelled
+Returned
+
+Create an order details page with a visual timeline.
+
+Example:
+
+Order Confirmed
+↓
+Processing
+↓
+Shipped
+↓
+Out for Delivery
+↓
+Delivered
+
+Users should be able to:
+
+* View order
+* Cancel eligible orders
+* Request return
+* Download/view invoice UI
+* Reorder items
+
+## 16. ADMIN DASHBOARD
+
+Create protected admin routes:
+
+/admin
+
+Only admin users should have access.
+
+Admin dashboard should contain:
+
+Dashboard
+Products
+Categories
+Inventory
+Orders
+Customers
+Reviews
+Coupons
+Analytics
+
+### Dashboard
+
+Display:
+
+Total Revenue
+Orders
+Customers
+Products
+Low Stock Products
+
+Create charts for:
+
+Sales over time
+Orders over time
+Revenue by category
+Top products
+
+Use real database data where available.
+
+### Product Management
+
+Admin can:
+
+Create product
+Edit product
+Delete/archive product
+Upload multiple images
+Set category
+Set brand
+Set price
+Set discount
+Set stock
+Manage variants
+Set featured status
+
+### Inventory
+
+Display:
+
+Product
+SKU
+Stock
+Reserved stock
+Availability
+
+Highlight low-stock products.
+
+### Order Management
+
+Admin can:
+
+View orders
+Filter orders
+Search orders
+Change order status
+View customer and order information
+
+### Coupon Management
+
+Admin can:
+
+Create
+Edit
+Activate/deactivate
+Delete coupons
+
+## 17. DATABASE
+
+Design a normalized PostgreSQL database.
+
+Create tables such as:
+
+profiles
+categories
+products
+product_images
+product_variants
+inventory
+wishlists
+wishlist_items
+carts
+cart_items
+addresses
+orders
+order_items
+reviews
+coupons
+coupon_usage
+notifications
+recently_viewed
+
+Important relationships:
+
+profiles → orders
+profiles → addresses
+profiles → reviews
+
+categories → products
+
+products → product_images
+products → product_variants
+products → reviews
+
+orders → order_items
+
+carts → cart_items
+
+wishlists → wishlist_items
+
+Use:
+
+* Primary keys
+* Foreign keys
+* Appropriate indexes
+* Unique constraints
+* created_at
+* updated_at
+
+Use UUIDs where appropriate.
+
+## 18. SECURITY
+
+Configure Supabase Row Level Security.
+
+Users must only be able to access or modify their own:
+
+Profile
+Addresses
+Cart
+Wishlist
+Orders
+Notifications
+
+Public users can read active products and categories.
+
+Users must NOT be able to modify:
+
+Product price
+Inventory
+Another user's orders
+Another user's addresses
+Admin data
+
+Admin operations should require role authorization.
+
+Do not rely solely on hiding admin buttons in the frontend.
+
+## 19. ANIMATIONS
+
+Animations should enhance the interface rather than distract users.
+
+Use subtle:
+
+Page transitions
+Card hover effects
+Button feedback
+Image hover zoom
+Cart drawer animation
+Modal transitions
+Dropdown transitions
+Wishlist heart animation
+Add-to-cart animation
+Skeleton loaders
+Toast notifications
+Navbar transition
+Hero entrance animation
+
+Respect prefers-reduced-motion.
+
+Avoid animating everything.
+
+## 20. LOADING AND ERROR STATES
+
+Every data-driven area should have:
+
+Loading state
+Skeleton loader
+Empty state
+Error state
+Retry option where useful
+
+Examples:
+
+Empty cart
+Empty wishlist
+No orders
+No products found
+Search returned no results
+Network/database error
+
+Do not leave blank sections.
+
+## 21. INTERACTIVE UX
+
+Add professional micro-interactions:
+
+Quick View
+Quick Add
+Toast notifications
+Confirmation dialogs
+Dropdown menus
+Tooltips
+Search suggestions
+Filter drawer
+Cart drawer
+Image zoom
+Quantity controls
+Favorite animation
+Smooth scrolling where appropriate
+
+## 22. ACCESSIBILITY
+
+Implement:
+
+Semantic HTML
+Keyboard navigation
+Visible focus states
+ARIA labels where needed
+Alt text
+Accessible dialogs
+Good contrast
+Proper form labels
+
+## 23. PERFORMANCE
+
+Implement:
+
+Lazy-loaded images
+Code splitting where appropriate
+Debounced search
+Efficient database queries
+Pagination
+Optimized product images
+Skeleton loading
+Reusable components
+
+Avoid unnecessary React re-renders.
+
+## 24. REALISTIC SAMPLE DATA
+
+Seed the database with approximately 30–50 realistic products across multiple categories.
+
+Each product should contain realistic:
+
+Name
+Brand
+Price
+Discount
+Description
+Specifications
+Stock
+Rating data
+Category
+Images/placeholders
+Variants
+
+Do not use repetitive text such as:
+
+"Product 1"
+"Lorem ipsum"
+"Example Product"
+
+The application should look populated enough to demonstrate during an interview.
+
+## 25. ROUTES
+
+Create routes similar to:
+
+/
+/shop
+/search
+/category/:slug
+/product/:slug
+/cart
+/wishlist
+/checkout
+/order-success/:id
+/account
+/account/orders
+/account/orders/:id
+/account/addresses
+/account/settings
+/login
+/signup
+/forgot-password
+/admin
+/admin/products
+/admin/orders
+/admin/inventory
+/admin/customers
+/admin/reviews
+/admin/coupons
+/admin/analytics
+
+Create proper:
+
+* 404 page
+* Unauthorized page
+* Error page
+
+## 26. FOOTER
+
+Create a professional multi-column footer.
+
+Sections:
+
+Shop
+Customer Support
+Company
+Policies
+Follow Us
+
+Include:
+
+About
+Contact
+FAQ
+Shipping
+Returns
+Privacy
+Terms
+
+Use realistic copy rather than placeholder text.
+
+## 27. PROJECT STRUCTURE
+
+Keep code organized.
+
+Example:
+
+src/
+components/
+common/
+layout/
+product/
+cart/
+checkout/
+account/
+admin/
+
+pages/
+
+hooks/
+
+services/
+
+integrations/
+supabase/
+
+types/
+
+utils/
+
+constants/
+
+Do not create huge monolithic components.
+
+Extract reusable functionality.
+
+## 28. HUMAN-WRITTEN CODE QUALITY
+
+This is extremely important.
+
+The project should feel intentionally engineered.
+
+Use:
+
+* Meaningful variable names
+* Meaningful component names
+* Consistent conventions
+* Small reusable components
+* Proper error handling
+* Useful comments only when needed
+* TypeScript typing
+* Separation of concerns
+
+Avoid:
+
+* Hundreds of unnecessary comments
+* Duplicate components
+* Random files
+* Fake API functions
+* Hardcoded data scattered throughout components
+* Excessive abstraction
+* Placeholder functionality presented as complete
+
+## 29. README
+
+Create a professional README containing:
+
+# NEXORA
+
+Project overview
+
+Features
+
+Architecture
+
+Tech Stack
+
+Database Design
+
+Authentication
+
+Installation
+
+Environment Variables
+
+Running Locally
+
+Database Setup
+
+Project Structure
+
+Screenshots section
+
+Future Improvements
+
+Security Considerations
+
+Do not mention Lovable or say that the project was AI-generated.
+
+## 30. FINAL REQUIREMENT
+
+Do not simply generate a beautiful frontend mockup.
+
+Build this as a REAL full-stack portfolio application.
+
+The most important flows that must actually work are:
+
+User registration/login
+↓
+Browse/search/filter products
+↓
+View product
+↓
+Add to cart/wishlist
+↓
+Manage cart
+↓
+Select address
+↓
+Apply coupon
+↓
+Checkout
+↓
+Create order
+↓
+View order history
+
+And:
+
+Admin login
+↓
+Manage products
+↓
+Manage inventory
+↓
+Manage orders
+↓
+Manage coupons
+
+Connect these features to Supabase/PostgreSQL.
+
+When implementing the project, prioritize FUNCTIONALITY over adding more decorative sections.
+
+If a feature cannot safely be completed without an external credential or service, create the correct integration architecture and clearly identify what configuration is required instead of faking the feature.
+
+Before considering the project complete, test all major routes and verify that navigation, authentication, database CRUD operations, cart, wishlist, checkout, orders, admin authorization, responsive design, loading states, and error states work correctly.
