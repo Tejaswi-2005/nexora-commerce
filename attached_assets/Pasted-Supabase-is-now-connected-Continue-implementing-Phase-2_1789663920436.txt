@@ -1,0 +1,317 @@
+Supabase is now connected.
+
+Continue implementing **Phase 2 of the existing NEXORA project from exactly where you stopped**.
+
+IMPORTANT:
+
+Do not rebuild or redesign Phase 1.
+
+Preserve the existing:
+
+* Homepage
+* Navbar
+* Product cards
+* Shop page
+* Search interface
+* Product detail design
+* Cart design
+* Wishlist design
+* Animations
+* Responsive layout
+* Overall NEXORA visual identity
+
+Now replace temporary/mock functionality with real Supabase-backed functionality.
+
+Work incrementally and verify each stage before moving to the next.
+
+### STEP 1 — Supabase connection verification
+
+First verify that the Supabase connection works.
+
+Confirm the project can communicate with Supabase without exposing private credentials.
+
+Use environment variables correctly.
+
+Never expose the Supabase service-role key in client-side code.
+
+### STEP 2 — Database schema
+
+Create the required PostgreSQL schema for:
+
+profiles
+categories
+products
+product_images
+product_variants
+addresses
+carts
+cart_items
+wishlists
+wishlist_items
+orders
+order_items
+reviews
+coupons
+coupon_usage
+recently_viewed
+notifications
+
+Use:
+
+* UUID primary keys where appropriate
+* Foreign keys
+* Unique constraints
+* created_at
+* updated_at
+* useful indexes
+
+Preserve referential integrity.
+
+Do not create duplicate tables if equivalent tables already exist.
+
+### STEP 3 — Authentication
+
+Implement real Supabase Authentication.
+
+Connect the existing NEXORA:
+
+Sign Up
+Login
+Logout
+Forgot Password
+
+interfaces to Supabase.
+
+Create/update a profile record when appropriate.
+
+Implement persistent sessions.
+
+Create an authentication context/hook such as:
+
+useAuth()
+
+with:
+
+user
+profile
+loading
+signIn
+signUp
+signOut
+
+Do not create fake authentication.
+
+### STEP 4 — RLS
+
+Enable Row Level Security.
+
+Users should only be able to access their own:
+
+profile
+addresses
+cart
+wishlist
+orders
+notifications
+recently viewed records
+
+Public users may read active products and categories.
+
+Normal customers must NOT be able to:
+
+change product prices
+change inventory
+access another customer's information
+modify another customer's orders
+perform admin operations
+
+Do not rely only on frontend route protection.
+
+### STEP 5 — Products
+
+Move the existing Phase 1 product data into PostgreSQL.
+
+Seed approximately 40 realistic products across:
+
+Electronics
+Fashion
+Footwear
+Beauty
+Home & Living
+Accessories
+Sports
+
+Preserve the existing UI.
+
+Home, Shop, Search and Product Details should now retrieve products from Supabase rather than hardcoded arrays.
+
+Keep the existing loading skeletons.
+
+### STEP 6 — Search/filtering
+
+Connect existing:
+
+Search
+Category filters
+Brand filters
+Price filters
+Rating filters
+Availability filters
+Sorting
+
+to actual database-backed product data.
+
+Use efficient queries and debounced search.
+
+### STEP 7 — Cart
+
+For authenticated users, persist the cart in Supabase.
+
+Support:
+
+Add
+Remove
+Quantity change
+Variant
+Clear cart
+
+Guests can continue using localStorage.
+
+When a guest logs in, intelligently merge the guest cart with their database cart.
+
+### STEP 8 — Wishlist
+
+Move authenticated wishlist persistence to Supabase.
+
+Support:
+
+Add
+Remove
+Move to Cart
+
+Keep wishlist indicators synchronized throughout the website.
+
+### STEP 9 — User account
+
+Connect:
+
+/account
+/account/addresses
+/account/orders
+
+to actual user data.
+
+Implement:
+
+Profile management
+Address management
+Order history
+Notifications
+
+Use Supabase Storage for avatar uploads if Storage is available.
+
+### STEP 10 — Checkout and orders
+
+Implement the existing checkout interface using real application data.
+
+Flow:
+
+Cart
+→ Address
+→ Delivery
+→ Payment method
+→ Review
+→ Place Order
+→ Order Confirmation
+
+Do NOT fake a real online payment.
+
+For now, support Cash on Delivery and/or clearly marked development/test payment behavior.
+
+Design the payment layer so Razorpay or Stripe can be integrated later.
+
+When an order is created:
+
+1. Validate products.
+2. Validate current prices.
+3. Validate inventory.
+4. Validate coupon.
+5. Calculate totals securely.
+6. Create the order.
+7. Create order_items.
+8. Reduce inventory.
+9. Record coupon usage where applicable.
+10. Clear the cart.
+11. Create an order notification.
+
+Do not trust totals supplied by the browser.
+
+Use a secure database function, server-side endpoint, transaction, or equivalent mechanism for sensitive order creation.
+
+### STEP 11 — Order history
+
+Implement:
+
+/account/orders
+
+and:
+
+/account/orders/:id
+
+Display actual database orders.
+
+Order statuses:
+
+Pending
+Confirmed
+Processing
+Shipped
+Out for Delivery
+Delivered
+Cancelled
+Returned
+
+Add the existing visual order timeline.
+
+### STEP 12 — Reviews
+
+Allow authenticated users who purchased a product to submit:
+
+1–5 star rating
+Review title
+Review text
+
+Only actual purchasers should receive:
+
+Verified Purchase
+
+Do not allow the frontend to arbitrarily set this value.
+
+### STEP 13 — Final verification
+
+Test this exact flow:
+
+Create account
+→ Login
+→ Browse database products
+→ Search
+→ Filter
+→ Open product
+→ Add wishlist
+→ Add cart
+→ Change quantity
+→ Add address
+→ Checkout
+→ Place test/COD order
+→ View order
+→ Logout
+→ Login
+→ Confirm data persisted
+
+Also test with two different users and verify that one user cannot read or modify the other user's private data.
+
+Fix database, authentication, RLS, TypeScript, and runtime errors you encounter.
+
+Do not redesign Phase 1 while doing this work.
+
+Proceed incrementally rather than attempting to rewrite the entire application at once.
