@@ -1,0 +1,428 @@
+# PRODUCT CATALOG, PRODUCT IMAGES & REALISTIC DATA
+
+Expand the NEXORA product catalog substantially.
+
+The current website has too few products and too few product images. I want the store to feel populated like a real e-commerce website.
+
+## CATEGORY REQUIREMENT
+
+The store currently contains these categories:
+
+* Electronics
+* Fashion
+* Footwear
+* Beauty
+* Home & Living
+* Accessories
+* Sports
+
+Create **AT LEAST 10 DISTINCT PRODUCTS IN EACH CATEGORY**.
+
+Minimum requirement:
+
+Electronics → 10+ products
+Fashion → 10+ products
+Footwear → 10+ products
+Beauty → 10+ products
+Home & Living → 10+ products
+Accessories → 10+ products
+Sports → 10+ products
+
+Therefore, the database should contain **at least 70 products total**.
+
+Do not simply duplicate existing products to reach this number.
+
+Every product must be meaningfully different.
+
+---
+
+## PRODUCT IMAGE REQUIREMENT
+
+Every product must have a valid product image.
+
+Do NOT reuse the same image repeatedly across different products.
+
+Where suitable, provide **3–5 images for an individual product** so the Product Details gallery feels realistic.
+
+For example:
+
+Wireless Headphones
+
+Image 1 → Front product view
+Image 2 → Side view
+Image 3 → Lifestyle/use image
+Image 4 → Detail/close-up view
+
+Store multiple product images using the existing:
+
+product_images
+
+database table.
+
+Use:
+
+product_id
+image_url
+alt_text
+sort_order
+
+The first image should be treated as the primary product image.
+
+---
+
+## IMAGE QUALITY
+
+Images must:
+
+* Match the actual product/category
+* Be clear
+* Have consistent visual quality
+* Load correctly
+* Have useful alt text
+* Work on desktop and mobile
+* Maintain proper aspect ratio
+* Avoid stretching
+* Avoid broken URLs
+
+Do NOT display unrelated random images merely to increase image count.
+
+Do NOT repeatedly use one placeholder image.
+
+If reliable external images cannot be safely or consistently provided, create the correct image/storage structure and use appropriate development assets rather than inserting broken URLs.
+
+---
+
+## ELECTRONICS
+
+Create at least 10 products covering different types such as:
+
+Wireless headphones
+Smartwatch
+Bluetooth speaker
+Mechanical keyboard
+Wireless mouse
+Power bank
+Portable SSD
+Gaming headset
+USB-C hub
+Webcam
+Earbuds
+Laptop accessories
+
+Do not create 10 nearly identical headphones.
+
+---
+
+## FASHION
+
+Create at least 10 products across:
+
+Men's shirts
+T-shirts
+Women's tops
+Dresses
+Jeans
+Jackets
+Hoodies
+Traditional/fusion wear
+Casual wear
+Activewear
+
+Include realistic:
+
+Sizes
+Colors
+Materials
+Prices
+
+---
+
+## FOOTWEAR
+
+Create at least 10 products across:
+
+Running shoes
+Sneakers
+Casual shoes
+Formal shoes
+Sandals
+Women's footwear
+Training shoes
+Walking shoes
+
+Include:
+
+Size variants
+Color variants
+Stock
+
+---
+
+## BEAUTY
+
+Create at least 10 products such as:
+
+Face cleanser
+Moisturizer
+Sunscreen
+Serum
+Lip products
+Shampoo
+Conditioner
+Body lotion
+Fragrance
+Hair care
+
+Include realistic product descriptions and specifications.
+
+---
+
+## HOME & LIVING
+
+Create at least 10 products such as:
+
+Table lamp
+Bedsheet
+Storage organizer
+Cookware
+Cushion
+Wall décor
+Bottle
+Kitchen accessories
+Desk organizer
+Home fragrance
+Small home accessories
+
+---
+
+## ACCESSORIES
+
+Create at least 10 products such as:
+
+Backpacks
+Handbags
+Wallets
+Sunglasses
+Watches
+Belts
+Caps
+Laptop sleeves
+Jewellery/accessories
+Travel accessories
+
+---
+
+## SPORTS
+
+Create at least 10 products such as:
+
+Yoga mat
+Football
+Badminton racket
+Cricket accessories
+Resistance bands
+Gym bag
+Skipping rope
+Water bottle
+Training equipment
+Fitness accessories
+
+---
+
+# PRODUCT INFORMATION
+
+Every product must contain realistic:
+
+* Product name
+* Slug
+* Brand
+* Category
+* Short description
+* Full description
+* Current price
+* Original price where applicable
+* Discount where applicable
+* SKU
+* Stock
+* Rating
+* Review count
+* Product images
+* Specifications
+* Variants where applicable
+* Featured flag
+* New-arrival flag
+* Active status
+
+Use **Indian Rupees (₹)** throughout the storefront.
+
+Avoid generic entries such as:
+
+"Product 1"
+
+"Premium Product"
+
+"Example Product"
+
+"Lorem ipsum"
+
+"Sample item"
+
+Product information should look naturally written.
+
+---
+
+# PRODUCT VARIETY
+
+Prices should vary realistically.
+
+For example, do not make every electronics product ₹1,999.
+
+Create realistic differences between:
+
+Budget
+Mid-range
+Premium
+
+products.
+
+Similarly, ratings and review counts should vary.
+
+Avoid making every product:
+
+4.5 stars
+120 reviews
+20% discount
+
+because that makes the generated dataset look artificial.
+
+---
+
+# PRODUCT DETAIL GALLERY
+
+When a product contains multiple images, the existing Product Details page must show:
+
+Large primary image
+
+Thumbnail gallery
+
+Previous/next controls
+
+Click thumbnail → change main image
+
+Desktop → image zoom where appropriate
+
+Mobile → swipe/navigation
+
+Do not redesign the existing Product Details page unnecessarily.
+
+---
+
+# SHOP PAGE
+
+All database products must automatically appear in the existing Shop page.
+
+Category filters must correctly display their respective products.
+
+For example:
+
+Electronics selected
+→ show Electronics products only.
+
+Fashion selected
+→ show Fashion products only.
+
+The category product count should come from actual data rather than being hardcoded.
+
+---
+
+# HOMEPAGE PRODUCT SECTIONS
+
+Do NOT show all 70+ products on the homepage.
+
+Instead create curated sections:
+
+Trending Now → approximately 8 products
+
+New Arrivals → approximately 8–10 products
+
+Best Sellers → approximately 8 products
+
+Recommended → approximately 8 products
+
+The complete catalog should remain accessible through Shop and category pages.
+
+---
+
+# PERFORMANCE
+
+Because the application will now contain many images:
+
+Implement:
+
+Lazy image loading
+Proper image sizing
+Responsive images where possible
+Loading skeletons
+Pagination or Load More
+Image error fallback
+
+Do not download every product image immediately when the homepage opens.
+
+---
+
+# DATABASE REQUIREMENT
+
+The 70+ products must ultimately exist in the Supabase/PostgreSQL database rather than only inside a frontend JavaScript array.
+
+Use the existing:
+
+products
+categories
+product_images
+product_variants
+
+tables.
+
+Do not create duplicate product tables.
+
+After seeding, verify the database contains at minimum:
+
+7 categories
+10+ products per category
+70+ total products
+
+and verify each product has at least one valid image.
+
+---
+
+# IMPORTANT
+
+Do NOT redesign the existing NEXORA website while doing this.
+
+Preserve the Phase 1:
+
+UI
+Animations
+Navigation
+Product cards
+Shop layout
+Product page
+Search
+Filters
+Responsive design
+
+The goal is to **populate and connect the existing store**, not rebuild it.
+
+Before considering this task complete, manually verify several products from EACH category and ensure:
+
+Images load
+Product page opens
+Correct category appears
+Price appears
+Variants work where applicable
+Add to cart works
+Wishlist works
+Search finds the product
+Filters correctly include the product
+
+Do not report this complete merely because database rows were inserted. Verify the storefront actually consumes and displays the new data.

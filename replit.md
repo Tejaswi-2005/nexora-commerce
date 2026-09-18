@@ -36,6 +36,7 @@ NEXORA is a considered everyday-goods storefront with searchable products, persi
 - Product catalog, cart, wishlist, coupons, and orders use the workspace PostgreSQL database through Drizzle.
 - Commerce endpoints use a session header so guest browsing and local development work before an external identity provider is connected.
 - Checkout is intentionally a test-mode order flow; payment providers are not faked and can be attached through the checkout service boundary later.
+- The connected Supabase connector currently exposes PostgREST only. The reproducible Supabase schema/RLS migration is at `artifacts/api-server/supabase/migrations/0001_nexora_phase2.sql`; it must be applied through a Supabase SQL migration runner before switching application data off the workspace database.
 
 ## Product
 
@@ -55,6 +56,7 @@ NEXORA is a considered everyday-goods storefront with searchable products, persi
 - After changing `lib/db/src/schema`, run `pnpm --filter @workspace/db run push` and then `pnpm run typecheck:libs`.
 - Artifact workflows provide `PORT` and `BASE_PATH`; do not run the Vite server directly for preview debugging.
 - Supabase authentication and live payment processing still require the corresponding integration setup before production use.
+- The current Supabase connection has no Auth endpoint or SQL/DDL capability exposed through the connector, so the storefront still uses development guest sessions and must not claim Supabase Auth is complete.
 
 ## Pointers
 

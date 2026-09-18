@@ -1,0 +1,1 @@
+- [Supabase connector limits](supabase-connector.md) — current connection exposes PostgREST only; schema/auth need a separate supported setup.

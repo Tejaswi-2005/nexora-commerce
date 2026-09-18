@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { and, asc, eq, ilike, or } from "drizzle-orm";
+import { and, asc, eq, ilike, or, sql } from "drizzle-orm";
 import {
   GetProductParams,
   GetSearchSuggestionsQueryParams,
@@ -13,6 +13,7 @@ import {
   GetSearchSuggestionsResponse,
 } from "@workspace/api-zod";
 import { db, categoriesTable, couponsTable, productsTable } from "@workspace/db";
+import { expandedProductSeeds } from "./catalog-expansion";
 
 const router: IRouter = Router();
 
@@ -21,8 +22,9 @@ const categorySeeds = [
   ["Fashion", "fashion", "Quietly confident pieces", "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=900&q=80"],
   ["Footwear", "footwear", "Made for the long way around", "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80"],
   ["Beauty", "beauty", "Daily rituals, refined", "https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=900&q=80"],
-  ["Home", "home", "Objects with a point of view", "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=900&q=80"],
+  ["Home & Living", "home", "Objects with a point of view", "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=900&q=80"],
   ["Accessories", "accessories", "The finishing details", "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=900&q=80"],
+  ["Sports", "sports", "Tools for moving well", "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=80"],
 ];
 
 const productSeeds: Array<
@@ -81,9 +83,6 @@ const toProduct = (product: typeof productsTable.$inferSelect) => ({
 });
 
 export async function ensureCatalogSeeded(): Promise<void> {
-  const existing = await db.select({ id: productsTable.id }).from(productsTable).limit(1);
-  if (existing.length > 0) return;
-
   await db.insert(categoriesTable).values(
     categorySeeds.map(([name, slug, description, imageUrl]) => ({
       name,
@@ -91,7 +90,14 @@ export async function ensureCatalogSeeded(): Promise<void> {
       description,
       imageUrl,
     })),
-  ).onConflictDoNothing();
+  ).onConflictDoUpdate({
+    target: categoriesTable.slug,
+    set: {
+      name: sql`excluded.name`,
+      description: sql`excluded.description`,
+      imageUrl: sql`excluded.image_url`,
+    },
+  });
 
   await db.insert(productsTable).values(
     productSeeds.map(([slug, name, brand, categorySlug, description, price, originalPrice, discountPercent, rating, reviewCount, stock, featured, isNew, colors, sizes, imageUrl, gallery, tags]) => ({
@@ -115,6 +121,17 @@ export async function ensureCatalogSeeded(): Promise<void> {
       tags,
     })),
   ).onConflictDoNothing();
+
+  await db
+    .insert(productsTable)
+    .values(expandedProductSeeds)
+    .onConflictDoUpdate({
+      target: productsTable.slug,
+      set: {
+        imageUrl: sql`excluded.image_url`,
+        gallery: sql`excluded.gallery`,
+      },
+    });
 
   await db.insert(couponsTable).values([
     { code: "WELCOME10", discountType: "percentage", discountValue: "10", minimumOrder: "50" },

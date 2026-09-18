@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { and, eq, ilike, inArray } from "drizzle-orm";
+import { and, eq, ilike, inArray, sql } from "drizzle-orm";
 import {
   AddCartItemBody,
   AddCartItemResponse,
@@ -137,7 +137,22 @@ router.post("/cart", async (req, res): Promise<void> => {
     res.status(404).json({ error: "Product not found" });
     return;
   }
-  const existing = await db.select().from(cartItemsTable).where(and(eq(cartItemsTable.cartId, cart.id), eq(cartItemsTable.productId, parsed.data.productId))).limit(1);
+  const existing = await db
+    .select()
+    .from(cartItemsTable)
+    .where(
+      and(
+        eq(cartItemsTable.cartId, cart.id),
+        eq(cartItemsTable.productId, parsed.data.productId),
+        parsed.data.color
+          ? eq(cartItemsTable.color, parsed.data.color)
+          : sql`${cartItemsTable.color} is null`,
+        parsed.data.size
+          ? eq(cartItemsTable.size, parsed.data.size)
+          : sql`${cartItemsTable.size} is null`,
+      ),
+    )
+    .limit(1);
   if (existing[0]) {
     await db.update(cartItemsTable).set({ quantity: existing[0].quantity + parsed.data.quantity }).where(eq(cartItemsTable.id, existing[0].id));
   } else {
@@ -159,10 +174,23 @@ router.patch("/cart/:itemId", async (req, res): Promise<void> => {
     res.status(400).json({ error: "Invalid cart item update" });
     return;
   }
+  const cart = await ensureCart(sessionFor(req));
+  const [ownedItem] = await db
+    .select({ id: cartItemsTable.id })
+    .from(cartItemsTable)
+    .where(and(eq(cartItemsTable.id, params.data.itemId), eq(cartItemsTable.cartId, cart.id)))
+    .limit(1);
+  if (!ownedItem) {
+    res.status(404).json({ error: "Cart item not found" });
+    return;
+  }
   if (body.data.quantity === 0) {
-    await db.delete(cartItemsTable).where(eq(cartItemsTable.id, params.data.itemId));
+    await db.delete(cartItemsTable).where(and(eq(cartItemsTable.id, params.data.itemId), eq(cartItemsTable.cartId, cart.id)));
   } else {
-    await db.update(cartItemsTable).set({ quantity: body.data.quantity }).where(eq(cartItemsTable.id, params.data.itemId));
+    await db
+      .update(cartItemsTable)
+      .set({ quantity: body.data.quantity })
+      .where(and(eq(cartItemsTable.id, params.data.itemId), eq(cartItemsTable.cartId, cart.id)));
   }
   res.json(UpdateCartItemResponse.parse(await cartResponse(sessionFor(req))));
 });
@@ -173,7 +201,10 @@ router.delete("/cart/:itemId", async (req, res): Promise<void> => {
     res.status(400).json({ error: params.error.message });
     return;
   }
-  await db.delete(cartItemsTable).where(eq(cartItemsTable.id, params.data.itemId));
+  const cart = await ensureCart(sessionFor(req));
+  await db
+    .delete(cartItemsTable)
+    .where(and(eq(cartItemsTable.id, params.data.itemId), eq(cartItemsTable.cartId, cart.id)));
   res.json(RemoveCartItemResponse.parse(await cartResponse(sessionFor(req))));
 });
 
@@ -239,6 +270,13 @@ router.post("/checkout", async (req, res): Promise<void> => {
     res.status(400).json({ error: "Your cart is empty." });
     return;
   }
+  const unavailable = rows.find(({ item, product }) => item.quantity > product.stock);
+  if (unavailable) {
+    res.status(409).json({
+      error: `${unavailable.product.name} does not have enough stock for that quantity.`,
+    });
+    return;
+  }
   const subtotal = rows.reduce((sum, row) => sum + Number(row.product.price) * row.item.quantity, 0);
   let discount = 0;
   if (parsed.data.couponCode) {
@@ -263,7 +301,14 @@ router.post("/checkout", async (req, res): Promise<void> => {
       price: product.price,
     })));
     for (const { item, product } of rows) {
-      await tx.update(productsTable).set({ stock: Math.max(0, product.stock - item.quantity) }).where(eq(productsTable.id, product.id));
+      const updated = await tx
+        .update(productsTable)
+        .set({ stock: sql`${productsTable.stock} - ${item.quantity}` })
+        .where(and(eq(productsTable.id, product.id), sql`${productsTable.stock} >= ${item.quantity}`))
+        .returning({ id: productsTable.id });
+      if (!updated[0]) {
+        throw new Error(`Insufficient stock for ${product.name}.`);
+      }
     }
     await tx.delete(cartItemsTable).where(eq(cartItemsTable.cartId, cart.id));
     return order;

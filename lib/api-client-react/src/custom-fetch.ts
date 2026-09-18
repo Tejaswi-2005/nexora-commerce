@@ -10,6 +10,7 @@ export type AuthTokenGetter = () => Promise<string | null> | string | null;
 
 const NO_BODY_STATUS = new Set([204, 205, 304]);
 const DEFAULT_JSON_ACCEPT = "application/json, application/problem+json";
+const SESSION_STORAGE_KEY = "nexora.guest.session";
 
 // ---------------------------------------------------------------------------
 // Module-level configuration
@@ -89,6 +90,18 @@ function mergeHeaders(...sources: Array<HeadersInit | undefined>): Headers {
   }
 
   return headers;
+}
+
+function getGuestSessionId(): string | null {
+  if (typeof window === "undefined" || !window.localStorage) return null;
+  const existing = window.localStorage.getItem(SESSION_STORAGE_KEY);
+  if (existing) return existing;
+  const generated =
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID()
+      : `guest-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  window.localStorage.setItem(SESSION_STORAGE_KEY, generated);
+  return generated;
 }
 
 function getMediaType(headers: Headers): string | null {
@@ -347,6 +360,11 @@ export async function customFetch<T = unknown>(
 
   if (responseType === "json" && !headers.has("accept")) {
     headers.set("accept", DEFAULT_JSON_ACCEPT);
+  }
+
+  if (!headers.has("x-session-id")) {
+    const guestSessionId = getGuestSessionId();
+    if (guestSessionId) headers.set("x-session-id", guestSessionId);
   }
 
   // Attach bearer token when an auth getter is configured and no
