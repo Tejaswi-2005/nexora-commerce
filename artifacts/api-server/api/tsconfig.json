@@ -1,0 +1,13 @@
+
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "noEmitOnError": true,
+    "rootDir": "..",
+    "outDir": "../dist-vercel",
+    "module": "ESNext",
+    "moduleResolution": "bundler"
+  },
+  "include": ["./index.ts"]
+}
