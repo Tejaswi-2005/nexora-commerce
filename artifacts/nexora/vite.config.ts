@@ -64,15 +64,23 @@ export default defineConfig({
     outDir: path.resolve(import.meta.dirname, 'dist/public'),
     emptyOutDir: true,
   },
+  
   server: {
     port,
     strictPort: true,
     host: '0.0.0.0',
     allowedHosts: true,
-    fs: {
-      strict: true,
+    proxy: {
+      '/api': {
+        target: 'http://127.0.0.1:3000',
+        changeOrigin: true,
+      },
     },
+  fs: {
+    strict: true,
   },
+},
+
   preview: {
     port,
     host: '0.0.0.0',
