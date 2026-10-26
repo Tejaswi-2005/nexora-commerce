@@ -2,11 +2,6 @@
 
 NEXORA Commerce is a full-stack e-commerce platform designed to provide a modern and responsive online shopping experience. It includes product discovery, category-based browsing, cart and wishlist management, checkout, order tracking, and a database-backed REST API.
 
-## Live Demo
-
-**Live Application:**  
-https://nexora-commerce--tejaswikunche06.replit.app
-
 ## Key Features
 
 - Modern responsive e-commerce interface
